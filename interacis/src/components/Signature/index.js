@@ -5,17 +5,16 @@ import Signature from 'react-native-signature-canvas';
 export default class SignatureScreen extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { signature: null };
+    this.state = { signature: null, descriptionText: 'Sign' };
   }
 
-  handleSignature = signature => {
-    this.setState({ signature });
-		console.log("TCL: SignatureScreen -> signature", signature)
-    
+  _handleSignature = signature => {
+    console.log("TCL: SignatureScreen -> signature", signature);
+    this.setState({descriptionText: 'Confirmed'});
   };
 
-  handleEmpty = () => {
-    console.log('Empty');
+  _hangleBegin = () => {
+    this.setState({descriptionText: 'Sign'});
   }
 
   render() {
@@ -36,9 +35,10 @@ export default class SignatureScreen extends React.Component {
           ) : null}
         </View> */}
         <Signature
-          onOK={this.handleSignature}
-          onEmpty={this.handleEmpty}
-          descriptionText="Sign"
+          onOK={this._handleSignature}
+          onBegin={this._hangleBegin}
+          descriptionText={this.state.descriptionText}
+          backgroundUrl="http://interacis.com:3333/img.png"
           clearText="Clear"
           confirmText="Save"
           webStyle={style}
