@@ -10,6 +10,6 @@ Its a proof of concept for interacis, the goal is to be able to complete the exc
  
 ### How does it work
  
-This website uses **Javascript** as primary language and **React Native** as the framework to route viewers through the app. Its connected to *flafuente/interacis-api repository* to access all the excercises available.
+This website uses **Javascript** as primary language and **React Native** as the framework to route viewers through the app. Its connected to [flafuente/interacis-api repository](https://github.com/flafuente/interacis-api) to access all the excercises available.
 
 
