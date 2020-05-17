@@ -1,5 +1,5 @@
 # ReactNative-drawable-canvas POC
-React Native app from scratch using the [react-native-signature-canvas](https://github.com/YanYuanFE/react-native-signature-canvaslibrary 
+React Native app from scratch using the [react-native-signature-canvas](https://github.com/YanYuanFE/react-native-signature-canvaslibrary)
 by YanYuanFE. 
 
 ## Overview
