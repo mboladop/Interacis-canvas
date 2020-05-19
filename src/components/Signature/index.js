@@ -1,6 +1,7 @@
 import React from 'react';
-import { StyleSheet, Button, TextInput, View, Alert } from 'react-native';
+import { StyleSheet, Button, TextInput, View, Alert, FlatList } from 'react-native';
 import Signature from 'react-native-signature-canvas';
+import Item from '../Item';
 
 export default class SignatureScreen extends React.Component {
   constructor(props) {
@@ -8,7 +9,8 @@ export default class SignatureScreen extends React.Component {
     this.state = {
       signature: null,
       descriptionText: 'Sign',
-      loadSignature: false
+      loadSignature: false,
+      activitiesList: []
     };
   }
 
@@ -32,11 +34,12 @@ export default class SignatureScreen extends React.Component {
       return response.json()
     })
     .then((responseJson) => {
-        //Success 
-        Alert.alert(
-          'Guardado correctamente'
-        );
-        this.setState({loadSignature: false});
+      this.reloadActivities();
+      //Success 
+      Alert.alert(
+        'Guardado correctamente'
+      );
+      this.setState({loadSignature: false});
     })
     .catch((error) => {
         //Error 
@@ -51,9 +54,11 @@ export default class SignatureScreen extends React.Component {
     this.setState({descriptionText: 'Sign'});
   }
 
-  _getActivity = () => {
+  _getActivity = (selected = false) => {
+    const activity = (selected) ? selected : this.state.activity;
+    this.setState({activity});
     //GET request 
-    fetch(`http://interacis.com:3333/api/v1/activities/single/${this.state.activity}`, {
+    fetch(`http://interacis.com:3333/api/v1/activities/single/${activity}`, {
         method: 'GET'
     })
     .then((response) => {
@@ -78,6 +83,41 @@ export default class SignatureScreen extends React.Component {
     this.setState({activity: text});
   }
 
+  componentDidMount = () => {
+    this.reloadActivities();
+  }
+  reloadActivities = () => {
+    fetch(`http://interacis.com:3333/api/v1/activities/student/1/book/5782`, {
+      method: 'GET'
+    })
+    .then((response) => {
+      if (response.status !== 200) throw new Error(response.status)
+      return response.json()
+    })
+    .then((responseJson) => {
+    console.log("componentDidMount -> responseJson", responseJson)
+        //Success 
+        // console.log(responseJson);
+        this.setState({activitiesList: responseJson});
+    })
+    .catch((error) => {
+        //Error 
+        Alert.alert(
+          'No existen actividades para el usuario'
+        );
+        // console.error(error);
+    });
+  }
+  renderSeparatorView = () => {
+    return (
+      <View style={{
+          height: 1, 
+          width: "100%",
+          backgroundColor: "#CEDCCE",
+        }}
+      />
+    );
+  };
   render() {
     const style = `
     .m-signature-pad--footer .button {
@@ -103,16 +143,25 @@ export default class SignatureScreen extends React.Component {
           clearText="Clear"
           confirmText="Save"
           webStyle={style}
-        /> : <View style={{flexDirection: 'row', marginTop: 50,}}>
+        /> : <View><View style={{flexDirection: 'row', marginTop: 50, marginBottom:100}}>
         <TextInput
           keyboardType={'number-pad'}
           style={{ height: 40, width: 200, borderColor: 'blue', borderWidth: 1 }}
           onChangeText={this._onChangeText}
         />
-        <View style={{flex:1 , marginRight:10}} >
+        <View style={{marginRight:10}} >
             <Button title="Save" onPress={this._getActivity}></Button>
         </View>
-      </View>}
+      </View>
+      <FlatList
+      styles={{flex:1}}
+        data={this.state.activitiesList}
+        ItemSeparatorComponent={this.renderSeparatorView}
+        renderItem={({ item }) => <Item title={item.enunciado} id={item.id} resolution={item.id_resolucion} action={this._getActivity} />}
+        keyExtractor={item => `list-item-${item.id}`}
+      />
+      </View>
+      }
       </View>
     );
   }
